@@ -1,12 +1,16 @@
 from django.contrib import admin
 from django.urls import reverse
-from .models import Post, Comment, Tag
+from .models import Post, Comment, Tag, Category
 from .forms import PostForm
 from django.utils.html import format_html
 
+admin.site.enable_nav_sidebar = False
+
 @admin.register(Post)
 class PostModelAdmin(admin.ModelAdmin):
-    list_display = ['display_image_thumbnail', 'title_link', 'author', 'publish_date', 'likes', 'dislikes']
+    list_display = ['display_image_thumbnail', 'title_link',
+                    'categories_formated', 'tags_formated',
+                    'author', 'publish_date', 'likes', 'dislikes']
     search_fields = ['title', 'content', 'author__username']
     readonly_fields = ['display_image']
     form = PostForm
@@ -20,6 +24,33 @@ class PostModelAdmin(admin.ModelAdmin):
     def title_link(self, obj):
         link = reverse("admin:posts_post_change", args=[obj.id])
         return format_html('<a href="{}">{}</a>', link, obj.title)
+
+    def tags_formated(self, obj):
+        res = ''
+        for tag in obj.tags.all():
+           res += f'''<span  style="border-radius: 20px; 
+                                    background-color: {tag.color}; 
+                                    text-align: center; 
+                                    margin: 5px;
+                                    padding: 5px;
+                                    color: purple">{tag.name}</span>'''
+        return format_html(res)
+
+    def categories_formated(self, obj):
+        res = ''
+        for category in obj.categories.all():
+           res += f'''<span  style="border-radius: 20px; 
+                                    background-color: #9c0e1c; 
+                                    text-align: center; 
+                                    margin: 5px;
+                                    padding: 5px;
+                                    color: white">{category.name}</span>'''
+        return format_html(res)
+
+    categories_formated.short_description = 'categories'
+    tags_formated.short_description = 'tags'
+    title_link.short_description = 'title'
+    display_image_thumbnail.short_description = 'thumbnail'
 
 
 @admin.register(Comment)
@@ -39,4 +70,10 @@ class CommentModelAdmin(admin.ModelAdmin):
 
 @admin.register(Tag)
 class TagModelAdmin(admin.ModelAdmin):
+    search_fields = ['name']
+
+
+@admin.register(Category)
+class CategoryModelAdmin(admin.ModelAdmin):
+    list_display = ['name', 'parent_category']
     search_fields = ['name']

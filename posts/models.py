@@ -19,6 +19,8 @@ class Post(models.Model):
     views = models.PositiveIntegerField(default=0)
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='posts')
     tags = models.ManyToManyField("Tag", related_name='posts', blank=True)
+    categories = models.ManyToManyField('Category', related_name='posts')
+
 
 
     def __str__(self): return self.title
@@ -39,6 +41,23 @@ class Comment(models.Model):
 class Tag(models.Model):
     name = models.CharField(max_length=100, validators=[validate_for_restricted_words,
                                                         validate_for_restricted_symbols])
+    color = models.CharField(max_length=10, default = 'white',
+                             choices={'green': 'Green',
+                                      'purple': 'Purple',
+                                      'red': 'Red',
+                                      'blue': "Blue",
+                                      'orange': 'Orange',
+                                      'gray': 'Gray',
+                                      'white': 'White'})
+
     def __str__(self): return self.name
 
+class Category(models.Model):
+    name = models.CharField(max_length=100)
+    parent_category = models.ForeignKey('self', null=True, blank=True,
+                                         related_name='subcategories',on_delete=models.CASCADE)
 
+    class Meta:
+         verbose_name_plural = 'categories'
+
+    def __str__(self): return self.name
