@@ -1,16 +1,14 @@
 from rest_framework import serializers
-from unicodedata import category
-
 from .models import Post, Tag, Category
-from django.contrib.auth import get_user_model
 
 class PostListSerializer(serializers.ModelSerializer):
     author_name = serializers.StringRelatedField(read_only=True, source='author')
-    author = serializers.PrimaryKeyRelatedField(queryset=get_user_model().objects.all(),
-                                            write_only=True)
+    content = serializers.CharField(write_only=True)
+
     class Meta:
         model = Post
-        fields = ['id', 'title', 'image', 'publish_date', 'author_name', 'author']
+        fields = ['id', 'title', 'image', 'publish_date', 'author_name', 'content']
+        read_only_fields = ['publish_date']
 
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
@@ -32,6 +30,7 @@ class PostDetailSerializer(PostListSerializer):
 
     class Meta:
         model = Post
+
         fields = ['id', 'title', 'image', 'publish_date',
                   'author_name', 'author', 'likes', 'dislikes',
                   'content','views', 'tags', 'categories',
