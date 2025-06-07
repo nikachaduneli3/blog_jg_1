@@ -35,7 +35,7 @@ class Comment(models.Model):
                                        related_name='replies')
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
 
-    def __str__(self): return f'{self.post.title} - {self.author}'
+    def __str__(self): return f'{self.content[:10]} - {self.author}'
 
 
 class Tag(models.Model):
