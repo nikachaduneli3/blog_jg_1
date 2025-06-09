@@ -7,11 +7,12 @@ from .validators import (
     validate_future_time
 
 )
+from django.utils import timezone
 
 class Post(models.Model):
     title = models.CharField(max_length=255, validators=[validate_for_restricted_symbols,
                                                          validate_for_restricted_words])
-    publish_date = models.DateTimeField(default=datetime.now, validators=[validate_future_time])
+    publish_date = models.DateTimeField(default=timezone.now, validators=[validate_future_time])
     content = models.TextField(validators=[validate_for_restricted_words])
     likes = models.PositiveIntegerField(default=0)
     dislikes = models.PositiveIntegerField(default=0)
