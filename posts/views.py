@@ -15,10 +15,15 @@ from .serializers import (
 from django.utils import timezone
 from .permissions import AuthorOrReadOnly
 from rest_framework.decorators import api_view
+from .filters import  PostFilterSet
+import django_filters
+
 
 class PostListApiView(ListCreateAPIView):
     queryset = Post.objects.all()
     serializer_class = PostListSerializer
+    filter_backends = [django_filters.rest_framework.DjangoFilterBackend]
+    filterset_class = PostFilterSet
 
     def perform_create(self, serializer):
         user = self.request.user
