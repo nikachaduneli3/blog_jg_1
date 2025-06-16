@@ -139,3 +139,9 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 10
 }
+
+EMAIL_HOST="smtp.gmail.com"
+EMAIL_PORT=587
+EMAIL_HOST_USER="chadunelinika15@mziuri.ge"
+EMAIL_HOST_PASSWORD="ohkttqireakckvuf"
+EMAIL_USE_TLS=True
