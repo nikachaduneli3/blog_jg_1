@@ -13,3 +13,4 @@ class User(AbstractUser):
     profile_picture = models.ImageField(upload_to='users', default='users/default-user.png')
     following = models.ManyToManyField('self',related_name='followers',
                                        symmetrical=False,)
+    is_public = models.BooleanField(default=True)
