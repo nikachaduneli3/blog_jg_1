@@ -13,7 +13,7 @@ class Command(BaseCommand):
         title = 'test title'
         content = 'Test content'
         image = 'http://localhost:8000/media/posts/jemali_6YntcYO.webp'
-        author_id = 1
+        author_id = 2
         tag = Tag.objects.first()
         category = Category.objects.first()
 

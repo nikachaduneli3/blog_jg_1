@@ -1,7 +1,7 @@
 from django.core.mail import send_mail
 from django.template.context_processors import request
 from rest_framework.decorators import api_view
-from rest_framework.generics import GenericAPIView, RetrieveUpdateAPIView
+from rest_framework.generics import GenericAPIView, RetrieveUpdateAPIView, ListAPIView, RetrieveAPIView
 from rest_framework.response import Response
 from .models import User
 from .serializers import UserRegisterSerializer, UserProfileSerializer
@@ -9,6 +9,10 @@ from .helpers import TokenGenerator
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
+from posts.models import Post
+from posts.serializers import PostListSerializer
+from .permissions import CanReadFollowingsPosts
+
 
 def generate_user_activation_url(request, user):
     current_site = get_current_site(request)
@@ -57,3 +61,24 @@ class ProfileApiView(RetrieveUpdateAPIView):
         user = self.request.user
         self.check_object_permissions(self.request, user)
         return user
+
+class UsersListApiView(ListAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserProfileSerializer
+
+class UsersDetailView(RetrieveAPIView):
+    serializer_class = UserProfileSerializer
+    queryset = User.objects.all()
+
+class UsersPostsView(ListAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostListSerializer
+    permission_classes = [CanReadFollowingsPosts]
+
+    def get_queryset(self):
+        result = super().get_queryset()
+        author_id = self.kwargs.get('author_id')
+        return result.filter(author_id=author_id)
+
+
+

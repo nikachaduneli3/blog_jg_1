@@ -23,3 +23,4 @@ class UserForm(UserChangeForm):
     class Meta:
         model = User
         fields = '__all__'
+        exclude = ['following']
