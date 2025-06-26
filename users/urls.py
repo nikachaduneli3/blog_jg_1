@@ -1,12 +1,5 @@
 from django.urls import path
-from .views import(
-    RegisterUser,
-    activate_user,
-    ProfileApiView,
-    UsersListApiView,
-    UsersDetailView,
-    UsersPostsView
-)
+from .views import *
 
 urlpatterns = [
     path('register/', RegisterUser.as_view()),
@@ -15,5 +8,7 @@ urlpatterns = [
     path('', UsersListApiView.as_view()),
     path('<int:pk>/', UsersDetailView.as_view()),
     path('<int:author_id>/posts/', UsersPostsView.as_view()),
+    path('send-request/', SendRequestView.as_view()),
+    path('received-requests/', ReceivedRequestsView.as_view())
 ]
 

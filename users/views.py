@@ -1,10 +1,21 @@
 from django.core.mail import send_mail
 from django.template.context_processors import request
 from rest_framework.decorators import api_view
-from rest_framework.generics import GenericAPIView, RetrieveUpdateAPIView, ListAPIView, RetrieveAPIView
+from rest_framework.generics import (
+    GenericAPIView,
+    RetrieveUpdateAPIView,
+    ListAPIView,
+    RetrieveAPIView,
+    CreateAPIView
+)
 from rest_framework.response import Response
-from .models import User
-from .serializers import UserRegisterSerializer, UserProfileSerializer
+from .models import User, FollowRequest
+from .serializers import (
+    UserRegisterSerializer,
+    UserProfileSerializer,
+    SendFollowRequestSerializer,
+    ReceivedFollowRequestSerializer
+)
 from .helpers import TokenGenerator
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -82,3 +93,18 @@ class UsersPostsView(ListAPIView):
 
 
 
+class SendRequestView(CreateAPIView):
+    queryset = FollowRequest.objects.all()
+    serializer_class = SendFollowRequestSerializer
+
+    def perform_create(self, serializer):
+        user = self.request.user
+        serializer.save(sent_from=user)
+
+class ReceivedRequestsView(ListAPIView):
+    queryset = FollowRequest.objects.all()
+    serializer_class = ReceivedFollowRequestSerializer
+
+    def get_queryset(self):
+        logged_in_user = self.request.user
+        return self.queryset.filter(sent_to=logged_in_user)

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import User
+from .models import User, FollowRequest
 from .forms import UserForm
 
 class FollowersInline(admin.TabularInline):
@@ -23,3 +23,8 @@ class UserModelAdmin(admin.ModelAdmin):
     form = UserForm
     inlines = [FollowersInline, FollowingInline]
     list_display = ['username', 'first_name', 'is_staff', 'is_superuser','is_active']
+
+
+@admin.register(FollowRequest)
+class FollowRequestAdmin(admin.ModelAdmin):
+    list_display = ['sent_from', 'sent_to']

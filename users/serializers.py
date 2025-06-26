@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User
+from .models import User, FollowRequest
 
 
 class UserRegisterSerializer(serializers.Serializer):
@@ -19,3 +19,14 @@ class UserProfileSerializer(serializers.ModelSerializer):
         model = User
         fields = ['email', 'first_name', 'last_name', 'gender',
                   'age', 'address', 'bio', 'profile_picture']
+
+class SendFollowRequestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FollowRequest
+        fields = ['sent_to']
+        
+class ReceivedFollowRequestSerializer(serializers.ModelSerializer):
+    sent_from = serializers.StringRelatedField()
+    class Meta:
+        model = FollowRequest
+        fields = ['sent_from']
