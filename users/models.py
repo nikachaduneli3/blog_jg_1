@@ -29,3 +29,15 @@ class FollowRequest(models.Model):
         if self.sent_to == self.sent_from:
             raise ValidationError('Sender receiver can\'t be same !')
         return super().clean(*args, **kwargs)
+
+    def accept(self):
+        self.sent_to.followers.add(self.sent_from)
+        self.delete()
+
+    def follow_back(self):
+        self.sent_to.followers.add(self.sent_from)
+        self.sent_to.following.add(self.sent_from)
+        self.delete()
+
+    def reject(self):
+        self.delete()

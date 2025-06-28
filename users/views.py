@@ -77,9 +77,11 @@ class UsersListApiView(ListAPIView):
     queryset = User.objects.all()
     serializer_class = UserProfileSerializer
 
+
 class UsersDetailView(RetrieveAPIView):
     serializer_class = UserProfileSerializer
     queryset = User.objects.all()
+
 
 class UsersPostsView(ListAPIView):
     queryset = Post.objects.all()
@@ -92,14 +94,19 @@ class UsersPostsView(ListAPIView):
         return result.filter(author_id=author_id)
 
 
-
 class SendRequestView(CreateAPIView):
     queryset = FollowRequest.objects.all()
     serializer_class = SendFollowRequestSerializer
 
     def perform_create(self, serializer):
         user = self.request.user
+        sent_to = serializer.validated_data.get('sent_to')
+        if FollowRequest.objects.filter(sent_from=user, sent_to=sent_to).exists():
+            return
+        if sent_to.followers.filter(id=user.id).exists():
+            return
         serializer.save(sent_from=user)
+
 
 class ReceivedRequestsView(ListAPIView):
     queryset = FollowRequest.objects.all()
@@ -108,3 +115,26 @@ class ReceivedRequestsView(ListAPIView):
     def get_queryset(self):
         logged_in_user = self.request.user
         return self.queryset.filter(sent_to=logged_in_user)
+
+
+class HandleRequestsView(GenericAPIView):
+    queryset = FollowRequest.objects.all()
+    serializer_class = ReceivedFollowRequestSerializer
+
+    def post(self, request,  *args, **kwargs): #accept
+        follow_request = self.get_object()
+        follow_request.accept()
+        return Response({'message': 'request has been accepted'})
+
+    def put(self, request,  *args, **kwargs): #follow back
+        follow_request = self.get_object()
+        follow_request.follow_back()
+        return Response({'message': 'request has been accepted'})
+
+    def delete(self, request,  *args, **kwargs): #reject
+        follow_request = self.get_object()
+        follow_request.reject()
+        return Response({'message': 'request has been rejected'})
+
+
+

@@ -9,6 +9,7 @@ urlpatterns = [
     path('<int:pk>/', UsersDetailView.as_view()),
     path('<int:author_id>/posts/', UsersPostsView.as_view()),
     path('send-request/', SendRequestView.as_view()),
-    path('received-requests/', ReceivedRequestsView.as_view())
+    path('received-requests/', ReceivedRequestsView.as_view()),
+    path('received-requests/<int:pk>/', HandleRequestsView.as_view()),
 ]
 

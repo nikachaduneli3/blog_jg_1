@@ -29,4 +29,4 @@ class ReceivedFollowRequestSerializer(serializers.ModelSerializer):
     sent_from = serializers.StringRelatedField()
     class Meta:
         model = FollowRequest
-        fields = ['sent_from']
+        fields = ['id', 'sent_from']
